@@ -1,4 +1,10 @@
 mod data;
 mod model;
+mod train;
 
-fn main() {}
+use burn::backend::{wgpu::WgpuDevice, Autodiff, Wgpu};
+
+fn main() {
+    let device = WgpuDevice::default();
+    train::train::<Autodiff<Wgpu>>("./artifacts", device);
+}

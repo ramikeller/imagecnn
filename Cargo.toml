@@ -6,11 +6,11 @@ edition = "2024"
 [dependencies]
 # burn: the core framework. "train" and "wgpu" are feature flags that enable
 # the training utilities and the WGPU GPU backend respectively.
-burn = { version = "0.16", features = ["train", "wgpu"] }
+burn = { version = "0.21", features = ["train", "wgpu"] }
 
 # burn-dataset: provides ready-to-use datasets. The "vision" feature includes
 # MNIST and other image datasets with automatic downloading and parsing.
-burn-dataset = { version = "0.16", features = ["vision"] }
+burn-dataset = { version = "0.21", features = ["vision"] }
 
 # serde: a serialization library used by Burn to save/load model configs.
 serde = { version = "1", features = ["derive"] }
