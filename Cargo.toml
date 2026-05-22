@@ -14,3 +14,9 @@ burn-dataset = { version = "0.21", features = ["vision"] }
 
 # serde: a serialization library used by Burn to save/load model configs.
 serde = { version = "1", features = ["derive"] }
+
+# image: load and resize arbitrary image files for inference.
+image = { version = "0.25", default-features = false, features = ["png", "jpeg"] }
+
+# clap: command-line argument parsing.
+clap = { version = "4", features = ["derive"] }

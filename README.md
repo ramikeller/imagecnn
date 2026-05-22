@@ -29,10 +29,30 @@ After 10 epochs (batch size 64, Adam lr=1e-4):
 **Train:**
 
 ```bash
-cargo run --release
+cargo run --release -- train
 ```
 
 Checkpoints and metrics are written to `./artifacts/`.
+
+**Infer:**
+
+```bash
+cargo run --release -- infer path/to/digit.png
+```
+
+Accepts any PNG or JPEG. The image is resized to 28×28 grayscale before classification.
+
+```
+Predicted digit : 7
+Confidence      : 99.3%
+```
+
+**Help:**
+
+```bash
+cargo run --release -- --help
+cargo run --release -- infer --help
+```
 
 ## Project structure
 
@@ -41,5 +61,6 @@ src/
   data.rs   — MNIST batcher (normalises pixels to [0, 1])
   model.rs  — CNN definition
   train.rs  — training loop, optimizer, metrics
-  main.rs   — entry point (WGPU backend)
+  infer.rs  — loads checkpoint and classifies a single image
+  main.rs   — clap CLI entry point (WGPU backend)
 ```
