@@ -21,7 +21,7 @@ impl<B: Backend> Batcher<B, MnistItem, MnistBatch<B>> for MnistBatcher {
             .iter()
             .map(|item| TensorData::from(item.image).convert::<f32>())
             .map(|data| Tensor::<B, 2>::from_data(data, device))
-            .map(|tensor| tensor.reshape([1, 28, 28]) / 255.0)
+            .map(|tensor| tensor / 255.0)
             .collect();
 
         let images = Tensor::stack(images, 0);
