@@ -1,4 +1,5 @@
 mod data;
+mod evaluate;
 mod infer;
 mod model;
 mod train;
@@ -22,6 +23,8 @@ enum Command {
         /// Path to a PNG or JPEG image (will be resized to 28×28)
         image: String,
     },
+    /// Evaluate the trained model on the full MNIST test set
+    Evaluate,
 }
 
 fn main() {
@@ -31,5 +34,6 @@ fn main() {
     match cli.command {
         Command::Train => train::train::<Autodiff<Wgpu>>("./artifacts", device),
         Command::Infer { image } => infer::infer::<Wgpu>("./artifacts", &image, device),
+        Command::Evaluate => evaluate::evaluate::<Wgpu>("./artifacts", device),
     }
 }
