@@ -1,6 +1,6 @@
 # imagecnn
 
-A convolutional neural network trained on the [MNIST](http://yann.lecun.com/exdb/mnist/) handwritten digit dataset, written in Rust using the [Burn](https://burn.dev) deep learning framework (v0.21).
+A Convolutional Neural Network (CNN) trained on the [MNIST](http://yann.lecun.com/exdb/mnist/) handwritten digit dataset, written in Rust using the [Burn](https://burn.dev) deep learning framework (v0.21).
 
 ## Architecture
 
@@ -8,9 +8,9 @@ A convolutional neural network trained on the [MNIST](http://yann.lecun.com/exdb
 Input [batch, 28, 28]
   → Conv2d(1→8, 3×3) → ReLU → MaxPool2d(2×2)   # [batch, 8, 13, 13]
   → Conv2d(8→16, 3×3) → ReLU → MaxPool2d(2×2)  # [batch, 16, 5, 5]
-  → Flatten                                      # [batch, 400]
-  → Linear(400→128) → ReLU                      # [batch, 128]
-  → Linear(128→10)                              # [batch, 10]
+  → Flatten                                    # [batch, 400]
+  → Linear(400→128) → ReLU                     # [batch, 128]
+  → Linear(128→10)                             # [batch, 10]
 ```
 
 Total parameters: **53,866**
@@ -23,6 +23,8 @@ After 10 epochs (batch size 64, Adam lr=1e-4):
 |------------|----------|-------|
 | Train      | 97.56%   | 0.082 |
 | Validation | 97.75%   | 0.071 |
+
+> **Note:** The Results section reports 97.75% validation accuracy as logged during training. This is a batch-averaged estimate computed on the fly. The Evaluation section below reports 97.72%, which is an exact count over all 10,000 test images run after training. The small difference is expected.
 
 ## Evaluation
 
@@ -103,7 +105,7 @@ src/
   data.rs   — MNIST batcher (normalises pixels to [0, 1])
   model.rs  — CNN definition
   train.rs  — training loop, optimizer, metrics
-  infer.rs    — loads checkpoint and classifies a single image
+  infer.rs  — loads checkpoint and classifies a single image
   evaluate.rs — runs the full test set and prints per-class accuracy + confusion matrix
   main.rs   — clap CLI entry point (WGPU backend)
 ```
