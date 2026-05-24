@@ -19,11 +19,20 @@ impl<B: Backend> Batcher<B, MnistItem, MnistBatch<B>> for MnistBatcher {
     fn batch(&self, items: Vec<MnistItem>, device: &B::Device) -> MnistBatch<B> {
         let images = items
             .iter()
-            .map(|item| TensorData::from(item.image).convert::<f32>())
-            .map(|data| Tensor::<B, 2>::from_data(data, device))
-            .map(|tensor| tensor / 255.0)
+            .map(|item| {
+                // item.image is [[u8; 28]; 28] — from() preserves the 2D shape,
+                // yielding a TensorData of shape [28, 28] with 784 f32 values
+                let data = TensorData::from(item.image).convert::<f32>();
+
+                // From the TensorData, create a rank-2 [28, 28] tensor on the target device
+                let tensor = Tensor::<B, 2>::from_data(data, device);
+
+                // Normalize pixel values from [0, 255] to [0.0, 1.0]
+                tensor / 255.0
+            })
             .collect();
 
+        // Tensor::stack(images, 0) inserts a new dimension at position 0 and stack individual [28, 28] tensors along a new batch dimension → [batch_size, 28, 28]. 
         let images = Tensor::stack(images, 0);
 
         let targets = items
