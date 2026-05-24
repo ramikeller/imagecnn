@@ -21,14 +21,20 @@ pub fn infer<B: Backend>(artifact_dir: &str, image_path: &str, device: B::Device
         .to_luma8();
 
     let img = image::imageops::resize(&img, 28, 28, image::imageops::FilterType::Lanczos3);
-
-    // Convert pixels to a [28, 28] float tensor normalised to [0, 1].
     let pixels: Vec<f32> = img.pixels().map(|p| p[0] as f32 / 255.0).collect();
+    // Convert pixels to TensorData [28, 28] normalised to [0, 1].
     let data = TensorData::new(pixels, [28usize, 28]);
+
+    // The model's layers were trained on batches of shape [batch_size, 28, 28], so they always expect a 
+    // rank-3 tensor as input. The convolution and linear layers have no special case for "single image" — they 
+    // only know how to process a 3D input where the first dimension is the batch size.
+    // from_data creates a rank-2 Tensor<B, 2> of shape [28, 28];
+    // unsqueeze::<3>() inserts a batch dimension at position 0 → shape [1, 28, 28].
     let image_tensor = Tensor::<B, 2>::from_data(data, &device).unsqueeze::<3>();
 
-    // Forward pass → logits [1, 10], then softmax for probabilities.
+    // Forward pass: input [1, 28, 28] → logits Tensor<B, 2> of shape [1, 10] (one score per digit class)
     let logits = model.forward(image_tensor);
+    // softmax along dimension 1 converts raw scores to probabilities that sum to 1.0; shape stays [1, 10]
     let probs = burn::tensor::activation::softmax(logits, 1);
 
     let pred = probs
